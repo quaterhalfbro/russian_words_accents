@@ -1,0 +1,13 @@
+{
+  "DenseNet": {
+    "EMBEDDING_DIM": 64,
+    "DICT_SIZE": 4340,
+    "MAX_LENGTH": 6
+  },
+
+  "BertNet": {
+    "EMBEDDING_DIM": 128,
+    "DICT_SIZE": 3777,
+    "MAX_LENGTH": 6
+  }
+}
