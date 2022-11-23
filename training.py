@@ -9,7 +9,7 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 
 from syllables_splitting import split
-from models import LemmaUsingNet
+from models import LemmaUsingNetWithPositionalEmbeddings
 from build_vocab import build_vocab
 
 BATCH_SIZE = 256
@@ -39,18 +39,18 @@ class CustomDataset(Dataset):
                 "label": torch.tensor([self.labels[item] - 1])}
 
 
-df = pd.read_csv("data/train.csv")
+df = pd.read_csv("data/cleaned_dataset.csv")
 df2 = pd.read_csv("data/test.csv")
 
 vocab = build_vocab(list(df["word"]), list(df2["word"]))
 lemma_vocab = build_vocab(list(df["lemma"]), list(df2["lemma"]), tag="lemma")
-x_train, x_test, y_train, y_test = train_test_split(df[["word", "lemma"]], df["stress"], test_size=0.001, shuffle=True,
+x_train, x_test, y_train, y_test = train_test_split(df[["word", "lemma"]], df["stress"], test_size=0.1, shuffle=True,
                                                     random_state=42)
 
 train_dataloader = DataLoader(CustomDataset(x_train, y_train), batch_size=BATCH_SIZE)
 test_dataloader = DataLoader(CustomDataset(x_test, y_test), batch_size=BATCH_SIZE)
 
-model = LemmaUsingNet()
+model = LemmaUsingNetWithPositionalEmbeddings()
 max_length = model.get_parameter("MAX_LENGTH")
 max_lemma_length = model.get_parameter("MAX_LEMMA_LENGTH")
 optimizer = torch.optim.Adam(model.parameters(), lr=LR)
