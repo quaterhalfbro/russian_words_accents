@@ -95,6 +95,8 @@ class LemmaUsingNetWithPositionalEmbeddings(nn.Module):
         lemma_dict_size = self.get_parameter("LEMMA_DICT_SIZE")
         max_length = self.get_parameter("MAX_LENGTH")
         max_lemma_length = self.get_parameter("MAX_LEMMA_LENGTH")
+        self.encoder = nn.TransformerEncoder(
+            nn.TransformerEncoderLayer(embedding_dim, 1, batch_first=True, dropout=0.2), 2)
         self.word_embeddings = nn.Embedding(dict_size, embedding_dim)
         self.word_pos_embeddings = nn.Embedding(max_length, embedding_dim)
         self.lemma_embedding = nn.Embedding(lemma_dict_size, embedding_dim)
@@ -113,9 +115,9 @@ class LemmaUsingNetWithPositionalEmbeddings(nn.Module):
         x = self.dropout(x)
         lemma = self.lemma_embedding(lemma)
         pos_lemma_embedding = self.lemma_pos_embedding(
-            torch.tensor([i for i in range(len(lemma[0]))] * len(lemma)))
+            torch.tensor([[i for i in range(len(lemma[0]))]] * len(lemma)))
         lemma = self.dropout(lemma)
-        x = torch.cat((x, lemma), 1)
+        x = torch.cat((x + pos_embedding, lemma + pos_lemma_embedding), 1)
         x = torch.flatten(x, start_dim=1, end_dim=2)
         x = self.dense(x)
         return x
