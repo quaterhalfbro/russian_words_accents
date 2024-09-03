@@ -3,17 +3,17 @@ import pickle
 import pandas as pd
 
 from syllables_splitting import split
-from models import LemmaUsingNet
+from models import LemmaUsingNetWithPositionalEmbeddings
 
 
-model = LemmaUsingNet()
+model = LemmaUsingNetWithPositionalEmbeddings()
 max_length = model.get_parameter("MAX_LENGTH")
 max_lemma_length = model.get_parameter("MAX_LEMMA_LENGTH")
 dict_size = model.get_parameter("DICT_SIZE")
 lemma_dict_size = model.get_parameter("LEMMA_DICT_SIZE")
-model.load_state_dict(torch.load("checkpoints/bert_net57.pt"))
+model.load_state_dict(torch.load("weights/bert_net1.pt"))
 model.eval()
-vocab = pickle.load(open(f"checkpoints/vocab{dict_size}.pth", "rb"))
+vocab = pickle.load(open(f"checkpoints/vocab_{dict_size}.pth", "rb"))
 lemma_vocab = pickle.load(open(f"checkpoints/vocab_lemma{lemma_dict_size}.pth", "rb"))
 
 df = pd.read_csv("data/test.csv")
